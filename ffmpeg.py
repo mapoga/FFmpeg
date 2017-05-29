@@ -2,8 +2,8 @@ import os
 import re
 import subprocess
 import pprint
-import inspect
 import math
+import quickSeq
 
 rePad = re.compile("(\%0(\d)d)")
 reRatio = re.compile("(\:)")
@@ -296,7 +296,7 @@ class Output:
 		"h264_CBR_60_Kbps",
 		"h264_CBR_40_Kbps",
 	]
-	
+
 	def __init__(self, url, preset="prores_hq"):
 		self.url = os.path.splitext(url)[0]
 		self.preset = preset
@@ -361,10 +361,10 @@ class Output:
 		This method allows the encoder to attempt to achieve a certain output quality
 		for the whole file when output file size is of less importance.
 		0-51: where 0 is lossless, 23 is default, and 51 is worst possible
-		
+
 		presets:
 		ultrafast,superfast, veryfast, faster, fast, medium, slow, slower, veryslow, placebo
-		
+
 		According the x264 developer's blog you set:
 		vbv-maxrate = bitrate = B = target bitrate
 		vbv-bufsize = B / fps (in this video's case that's 24 fps)
@@ -590,100 +590,6 @@ class Ffmpeg:
 				st += ' No output.'
 			return st
 
-class Seq:
-	def __init__(self, seqPattern, first=None, last=None):
-		seqPattern = os.path.abspath(seqPattern)
-		reObj = self._isSequence(seqPattern)
-		self.head = seqPattern[:reObj.start(1)]
-		self.nLength = int(reObj.group(2))
-		self.tail = seqPattern[reObj.end(1):]
-		self.first = first
-		self.last = last
-
-	def __repr__(self):
-		return self.head+"%0{}d".format(self.nLength)+self.tail
-
-	def _isSequence(self, seqPattern):
-		reObj = rePad.search(seqPattern)
-		if not reObj:
-			raise ValueError("No sequence found in: {0}".format(seqPattern))
-		return reObj
-
-	def hasRange(self):
-		if self.first and self.last:
-			return True
-		return False
-
-	def listFrames(self):
-		frames = []
-		if self.hasRange():
-			for f in range(self.first, self.last+1):
-				nFile = self.head + str(f).zfill(self.nLength) + self.tail
-				frames.append(nFile)
-		return frames
-
-	def exists(self):
-		if not self.hasRange():
-			return False
-		for f in self.listFrames():
-			if not os.path.exists(f):
-				raise ValueError("File {0} does not exists".format(f))
-		return True
-
-	def setRangeFromExistingFrames(self): # does not consider previous range
-		paths = self.findExistingFrames()
-		if paths:
-			patt = "(\d{0})".format("{"+str(self.nLength)+"}")
-			reObj = re.search(patt,paths[0] )
-			self.first = int(reObj.group(1))
-			reObj = re.search(patt,paths[-1] )
-			self.last = int(reObj.group(1))
-
-	def findExistingFrames(self): # does not consider previous range
-		dir = os.path.split(self.head)[0]
-		files = os.listdir(dir)
-
-		#list matches to sequence pattern
-		worthy = []
-		for f in files:
-			patt = "(\d{0})".format("{"+str(self.nLength)+"}")
-			fullpath = os.path.join(dir, f)
-			reObj = re.search(patt,fullpath )
-			if reObj:
-				if fullpath[:reObj.start(1)] == self.head:
-					if fullpath[reObj.end(1):] == self.tail:
-						worthy.append(fullpath)
-
-		#chunk sublists ie: [1-10], [12-15], [18-22]
-		if worthy:
-			sorted(worthy)
-			subSequences = []
-			sub = []
-			last = None
-			for i in worthy:
-				reObj = re.search(patt, i)
-				n = int(reObj.group(0))
-
-				if last == None:
-					sub.append(i)
-					last = n
-				else:
-					if n == last+1:
-						sub.append(i)
-						last = n
-					else:
-						subSequences.append(sub)
-						sub = []
-						last = None
-			subSequences.append(sub)
-
-			#find the longest sublist
-			if subSequences:
-				return max(subSequences, key=len)
-
-		return []
-
-
 if __name__ == "__main__":
 	print("ffmpeg")
 
@@ -693,15 +599,6 @@ if __name__ == "__main__":
 	right = r'Z:\Programming\Python\ffmpeg\sources\fish_stereo\fish_right.%07d.tif'
 	start = 1
 	end = 10
-
-	#verifyFrames(seq, start, end)
-	b = Seq(seq, 1, 10)
-	print(b)
-	print(b.hasRange())
-	#print(b.listFrames())
-	print(b.exists())
-	print(b.first)
-	b.setRangeFromExistingFrames()
 
 
 	ff = Ffmpeg()
