@@ -372,7 +372,7 @@ class Output:
 		-crf 23 -maxrate 1M -bufsize 2M
 		"""
 
-class Ffmpeg:
+class FFmpeg:
 	SIMPLE_FITLERS = [
 		Scale,
 		Setsar,
@@ -407,14 +407,14 @@ class Ffmpeg:
 		self.outH = 0
 		self.outSar = '1/1'
 		self.outDar = '1/1'
-		self.outStereoType = Ffmpeg.OUT_STEREO_TYPES[0]
+		self.outStereoType = FFmpeg.OUT_STEREO_TYPES[0]
 
 	def addInput(self, i):
 		self.inputs.append(i)
 		self.SetRes()
 
 	def addFilter(self, f):
-		if [i for i in Ffmpeg.COMPLEX_FITLERS if isinstance(f, i)]:
+		if [i for i in FFmpeg.COMPLEX_FITLERS if isinstance(f, i)]:
 			self.complexFilters.append(f)
 		else:
 			self.simpleFilters.append(f)
@@ -468,17 +468,17 @@ class Ffmpeg:
 
 				if isinstance(f, Stereo3d):
 					if "sb" in f.outFormat:
-						self.outStereoType = Ffmpeg.OUT_STEREO_TYPES[1]
+						self.outStereoType = FFmpeg.OUT_STEREO_TYPES[1]
 					elif "ab" in f.outFormat:
-						self.outStereoType = Ffmpeg.OUT_STEREO_TYPES[2]
+						self.outStereoType = FFmpeg.OUT_STEREO_TYPES[2]
 					else:
-						self.outStereoType = Ffmpeg.OUT_STEREO_TYPES[0]
+						self.outStereoType = FFmpeg.OUT_STEREO_TYPES[0]
 
 			for f in self.complexFilters:
 				if isinstance(f, Hstack):
-					self.outStereoType = Ffmpeg.OUT_STEREO_TYPES[1]
+					self.outStereoType = FFmpeg.OUT_STEREO_TYPES[1]
 				elif isinstance(f, Vstack):
-					self.outStereoType = Ffmpeg.OUT_STEREO_TYPES[2]
+					self.outStereoType = FFmpeg.OUT_STEREO_TYPES[2]
 
 	def addOutput(self, o):
 		self.outputs.append(o)
@@ -497,7 +497,7 @@ class Ffmpeg:
 		args.extend(self.baseArgs)
 		# inputs
 		if not self.inputs:
-			raise ValueError("Ffmpeg needs at least one input")
+			raise ValueError("FFmpeg needs at least one input")
 		else:
 			for i in self.inputs:
 				args.extend(i.generateArgsList())
@@ -537,7 +537,7 @@ class Ffmpeg:
 			args.append(";".join(cfArgs))
 		#outputs
 		if not self.outputs:
-			raise ValueError("Ffmpeg needs at least one output")
+			raise ValueError("FFmpeg needs at least one output")
 		else:
 			for i in self.outputs:
 				args.extend(i.generateArgsList())
@@ -549,7 +549,7 @@ class Ffmpeg:
 
 	def run(self):
 		cmdList = self.genereateArgsList()
-		print("Ffmpeg.run(): ", cmdList)
+		print("FFmpeg.run(): ", cmdList)
 		subprocess.call(cmdList)
 
 	def inputSummary(self, idx=None):
@@ -601,7 +601,7 @@ if __name__ == "__main__":
 	end = 10
 
 
-	ff = Ffmpeg()
+	ff = FFmpeg()
 	#inputs
 	inputA = Input(video)
 	inputA.setFramerate(30)

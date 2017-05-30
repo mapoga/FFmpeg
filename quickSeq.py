@@ -4,6 +4,7 @@ import re
 RE_STEREO = re.compile('(%V)')
 RE_LEFT = re.compile('(left|Left)')
 RE_RIGHT = re.compile('(right|Right)')
+RE_LEFT_RIGHT = re.compile('(left|Left|right|Right)')
 
 RE_FORMAT = re.compile("(\%0(\d)d)")
 RE_NUMBERED = re.compile('(\d+)(?=\.)')
@@ -30,7 +31,7 @@ class Seq:
 		self.viewType = self.getViewType()
 
 	def __repr__(self):
-		return "{0}%0{1}d{2}".format(self.head, self.nLength, self.tail)
+		return "<Seq object> {0}%0{1}d{2}".format(self.head, self.nLength, self.tail)
 
 	def _isSequence(self):
 		format_obj = RE_FORMAT.search(self.url)

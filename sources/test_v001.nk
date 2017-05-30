@@ -1,25 +1,38 @@
-#! C:/vg/apps/Nuke/Nuke10.0v4/nuke-10.0.4.dll -nx
-version 10.0 v4
+#! C:/Program Files/Nuke10.0v3/nuke-10.0.3.dll -nx
+version 10.0 v3
 define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
 <layout version="1.0">
-    <window x="-8" y="-8" w="1936" h="1176" maximized="1" screen="0">
+    <window x="-8" y="-8" w="1936" h="1056" maximized="1" screen="1">
         <splitter orientation="1">
             <split size="1214"/>
             <splitter orientation="1">
-                <split size="1214"/>
-                <dock id="" hideTitles="1" activePageId="uk.co.thefoundry.scripteditor.2">
-                    <page id="uk.co.thefoundry.scripteditor.2"/>
+                <split size="46"/>
+                <dock id="" hideTitles="1" activePageId="Toolbar.1">
+                    <page id="Toolbar.1"/>
                 </dock>
+                <split size="1164"/>
+                <splitter orientation="2">
+                    <split size="582"/>
+                    <dock id="" activePageId="Viewer.1">
+                        <page id="Viewer.1"/>
+                    </dock>
+                    <split size="409"/>
+                    <dock id="" activePageId="DAG.1" focus="true">
+                        <page id="DAG.1"/>
+                        <page id="Curve Editor.1"/>
+                        <page id="DopeSheet.1"/>
+                    </dock>
+                </splitter>
             </splitter>
             <split size="702"/>
             <splitter orientation="2">
-                <split size="556"/>
-                <dock id="" activePageId="Viewer.1">
-                    <page id="Viewer.1"/>
+                <split size="285"/>
+                <dock id="" activePageId="Properties.1">
+                    <page id="Properties.1"/>
                 </dock>
-                <split size="555"/>
-                <dock id="" hideTitles="1" activePageId="DAG.1" focus="true">
-                    <page id="DAG.1"/>
+                <split size="706"/>
+                <dock id="" activePageId="uk.co.thefoundry.scripteditor.1">
+                    <page id="uk.co.thefoundry.scripteditor.1"/>
                 </dock>
             </splitter>
         </splitter>
@@ -28,9 +41,9 @@ define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
 }
 Root {
  inputs 0
- name U:/GitHub/ffmpeg/sources/test_v001.nk
+ name Z:/Programming/Python/GitHub/FFmpeg/sources/test_v001.nk
  project_directory "\[python \{nuke.script_directory()\}]"
- frame 52
+ frame 71
  lock_range true
  format "2048 1556 0 0 2048 1556 1 2K_Super_35(full-ap)"
  proxy_type scale
@@ -108,45 +121,7 @@ BackdropNode {
 }
 Read {
  inputs 0
- file U:/GitHub/ffmpeg/sources/fish_stereo/fish_%V.%07d.tif
- localizationPolicy off
- format "1280 720 0 0 1280 720 1 HD_720"
- last 100
- origlast 100
- origset true
- name Read3
- xpos 126
- ypos -463
- addUserKnob {20 vgas l Vgas +INVISIBLE}
- addUserKnob {1 nativeUID +DISABLED}
- nativeUID b40ac81e-4499-11e7-aa6a-74d02b2b0a3c
- addUserKnob {1 nodeType +DISABLED}
- nodeType Read
- addUserKnob {3 colorspace_already_set +DISABLED}
- colorspace_already_set 1
-}
-Read {
- inputs 0
- file U:/GitHub/ffmpeg/sources/fish_stereo/fish_%V.%07d.tif
- localizationPolicy off
- format "1280 720 0 0 1280 720 1 HD_720"
- last 100
- origlast 100
- origset true
- name Read2
- xpos -6
- ypos -462
- addUserKnob {20 vgas l Vgas +INVISIBLE}
- addUserKnob {1 nativeUID +DISABLED}
- nativeUID b40ac81e-4499-11e7-aa6a-74d02b2b0a3c
- addUserKnob {1 nodeType +DISABLED}
- nodeType Read
- addUserKnob {3 colorspace_already_set +DISABLED}
- colorspace_already_set 1
-}
-Read {
- inputs 0
- file U:/GitHub/ffmpeg/sources/fish/fish.%07d.tif
+ file ./fish/fish.%07d.tif
  localizationPolicy off
  format "1280 720 0 0 1280 720 1 HD_720"
  last 100
@@ -165,52 +140,14 @@ Read {
 }
 Read {
  inputs 0
- file U:/GitHub/ffmpeg/sources/fish_stereo/fish_right.%07d.tif
- localizationPolicy off
- format "1280 720 0 0 1280 720 1 HD_720"
- last 100
- origlast 100
- origset true
- name Read7
- xpos -163
- ypos -462
- addUserKnob {20 vgas l Vgas +INVISIBLE}
- addUserKnob {1 nativeUID +DISABLED}
- nativeUID b40f0de1-4499-11e7-98a1-74d02b2b0a3c
- addUserKnob {1 nodeType +DISABLED}
- nodeType Read
- addUserKnob {3 colorspace_already_set +DISABLED}
- colorspace_already_set 1
-}
-Read {
- inputs 0
- file U:/GitHub/ffmpeg/sources/fish_stereo/fish_left.%07d.tif
- localizationPolicy off
- format "1280 720 0 0 1280 720 1 HD_720"
- last 100
- origlast 100
- origset true
- name Read6
- xpos -250
- ypos -461
- addUserKnob {20 vgas l Vgas +INVISIBLE}
- addUserKnob {1 nativeUID +DISABLED}
- nativeUID b40ac81e-4499-11e7-aa6a-74d02b2b0a3c
- addUserKnob {1 nodeType +DISABLED}
- nodeType Read
- addUserKnob {3 colorspace_already_set +DISABLED}
- colorspace_already_set 1
-}
-Read {
- inputs 0
- file "\[python \{nuke.script_directory()\}]/fish/fish.%07d.tif"
+ file ./fish/fish.%07d.tif
  localizationPolicy off
  format "1280 720 0 0 1280 720 1 HD_720"
  last 100
  origlast 100
  origset true
  name Read1
- xpos -412
+ xpos -413
  ypos -459
  addUserKnob {20 vgas l Vgas +INVISIBLE}
  addUserKnob {1 nativeUID +DISABLED}
@@ -224,7 +161,7 @@ push 0
 push 0
 Viewer {
  inputs 3
- frame 52
+ frame 71
  frame_range 1-100
  input_number 2
  name Viewer1
@@ -233,4 +170,80 @@ Viewer {
  addUserKnob {20 vgas l Vgas +INVISIBLE}
  addUserKnob {1 nativeUID +DISABLED}
  nativeUID 2958a5cf-4499-11e7-bc54-74d02b2b0a3c
+}
+Read {
+ inputs 0
+ file ./fish_stereo/fish_right.%07d.tif
+ localizationPolicy off
+ format "1280 720 0 0 1280 720 1 HD_720"
+ last 100
+ origlast 100
+ origset true
+ name Read7
+ xpos -164
+ ypos -462
+ addUserKnob {20 vgas l Vgas +INVISIBLE}
+ addUserKnob {1 nativeUID +DISABLED}
+ nativeUID b40f0de1-4499-11e7-98a1-74d02b2b0a3c
+ addUserKnob {1 nodeType +DISABLED}
+ nodeType Read
+ addUserKnob {3 colorspace_already_set +DISABLED}
+ colorspace_already_set 1
+}
+Read {
+ inputs 0
+ file ./fish_stereo/fish_left.%07d.tif
+ localizationPolicy off
+ format "1280 720 0 0 1280 720 1 HD_720"
+ last 100
+ origlast 100
+ origset true
+ name Read6
+ xpos -250
+ ypos -463
+ addUserKnob {20 vgas l Vgas +INVISIBLE}
+ addUserKnob {1 nativeUID +DISABLED}
+ nativeUID b40ac81e-4499-11e7-aa6a-74d02b2b0a3c
+ addUserKnob {1 nodeType +DISABLED}
+ nodeType Read
+ addUserKnob {3 colorspace_already_set +DISABLED}
+ colorspace_already_set 1
+}
+Read {
+ inputs 0
+ file ./fish_stereo/fish_%V.%07d.tif
+ localizationPolicy off
+ format "1280 720 0 0 1280 720 1 HD_720"
+ last 100
+ origlast 100
+ origset true
+ name Read3
+ xpos 126
+ ypos -463
+ addUserKnob {20 vgas l Vgas +INVISIBLE}
+ addUserKnob {1 nativeUID +DISABLED}
+ nativeUID b40ac81e-4499-11e7-aa6a-74d02b2b0a3c
+ addUserKnob {1 nodeType +DISABLED}
+ nodeType Read
+ addUserKnob {3 colorspace_already_set +DISABLED}
+ colorspace_already_set 1
+}
+Read {
+ inputs 0
+ file ./fish_stereo/fish_%V.%07d.tif
+ localizationPolicy off
+ format "1280 720 0 0 1280 720 1 HD_720"
+ last 100
+ origlast 100
+ origset true
+ name Read2
+ xpos -7
+ ypos -462
+ addUserKnob {20 vgas l Vgas +INVISIBLE}
+ addUserKnob {1 nativeUID +DISABLED}
+ nativeUID b40ac81e-4499-11e7-aa6a-74d02b2b0a3c
+ addUserKnob {1 nodeType +DISABLED}
+ nodeType Read
+ addUserKnob {3 colorspace_already_set +DISABLED}
+ colorspace_already_set 1
 }

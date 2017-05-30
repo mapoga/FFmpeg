@@ -41,7 +41,8 @@ class FFmpegPanel(nukescripts.PythonPanel):
 		self.inputs = []
 		self.inputsFromSelected()
 		self.outputs = []
-
+		self.console = []
+		self.setInputsKnobs()
 		print(self.inputs)
 
 		if self.canShow:
@@ -98,10 +99,25 @@ class FFmpegPanel(nukescripts.PythonPanel):
 		right = []
 		stereo = []
 		for n in sel:
-			print("eval: ", n.knob('file').evaluate())
-			#print("lol: ", nuke.tcl(n.knob('file').value()))
+			# evaluate file name for tcl expression
+			# put back the padding removed from the evaluation
+			raw = n.knob('file').value()
+			evaluated = n.knob('file').evaluate()
+			print("evaluated: ", evaluated)
+			formatObj = quickSeq.RE_FORMAT.search(raw)
+			paddingObj = quickSeq.RE_PADDING.search(raw)
+			stereoObj = quickSeq.RE_STEREO.search(raw)
+			url = evaluated
+			if formatObj:
+				patt = "%0{0}d".format(str(int(formatObj.group(2))))
+				url = re.sub(quickSeq.RE_NUMBERED, patt, evaluated)
+			elif paddingObj:
+				patt = len(formatObj.group(1))*"#"
+				url = re.sub(quickSeq.RE_NUMBERED, patt, evaluated)
+			if stereoObj:
+				url = re.sub(quickSeq.RE_LEFT_RIGHT, "%V", url)
 			try:
-				s = quickSeq.Seq(n.knob('file').value())
+				s = quickSeq.Seq(url)
 				if s.viewType == quickSeq.URL_VIEW_TYPES[0]:
 					mono.append(s)
 				elif s.viewType == quickSeq.URL_VIEW_TYPES[1]:
@@ -122,7 +138,10 @@ class FFmpegPanel(nukescripts.PythonPanel):
 		if len(right) > 1:
 			self.stop('FFmpeg: Too many right reads selected. ({0}/{1})'.format(len(sel), 1))
 		if stereo:
-			self.inputs.extend(stereo)
+			stereoLeft = quickSeq.Seq(re.sub(quickSeq.RE_STEREO, 'left', stereo[0].url))
+			stereoRight = quickSeq.Seq(re.sub(quickSeq.RE_STEREO, 'right', stereo[0].url))
+			self.inputs.append(stereoLeft)
+			self.inputs.append(stereoRight)
 			return
 		if right:
 			self.inputs.extend(right)
@@ -136,6 +155,22 @@ class FFmpegPanel(nukescripts.PythonPanel):
 			if right:
 				self.inputs.reverse()
 
+	def setInputsKnobs(self):
+		if len(self.inputs) > 0:
+			print("has input left: ", self.inputs[0].url)
+			self.getKnob('fileLeft').setValue(self.inputs[0].url)
+		if len(self.inputs) > 1:
+			self.setEnableStereo(True)
+			self.getKnob('fileRight').setValue(self.inputs[1].url)
+
+	def setEnableStereo(self, val):
+		self.getKnob('enableStereoInputs').setValue(val)
+		for k in FFmpegPanel.STEREO_KNOBS:
+			self.getKnob(k).setVisible(val)
+		for k in FFmpegPanel.STEREO_CONVERT_KNOBS:
+			self.getKnob(k).setVisible(not val)
+			self.getKnob('enableStereoConvertTitle').setVisible(not val)
+			self.getKnob('enableStereoConvert').setVisible(not val)
 
 	def setKnobsDefaults(self):
 		self.getKnob('sarType').setValue(ffmpeg.Setsar.MODES[1])
@@ -149,11 +184,7 @@ class FFmpegPanel(nukescripts.PythonPanel):
 		self.getKnob('enableChunks').setValue(True)
 
 	def setKnobsFlags(self):
-		for k in FFmpegPanel.STEREO_KNOBS:
-			self.getKnob(k).setVisible(False)
-
-		for k in FFmpegPanel.STEREO_CONVERT_KNOBS:
-			self.getKnob(k).setVisible(False)
+		self.setEnableStereo(False)
 
 		for k in FFmpegPanel.SECOND_OUTPUT_KNOB:
 			self.getKnob(k).setVisible(False)
@@ -182,7 +213,10 @@ class FFmpegPanel(nukescripts.PythonPanel):
 		self.getKnob('chunkSecs').clearFlag(nuke.STARTLINE )
 
 	def getKnob(self, k):
-		return next(i for i in self.knobsList if i.name() == k )
+		try:
+			return next(i for i in self.knobsList if i.name() == k )
+		except:
+			raise IndexError("{0} not in knobs".format(k))
 
 	def knobChanged(self, knob):
 		print("Knob Changed: ", knob.name())
